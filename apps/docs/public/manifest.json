@@ -1,7 +1,7 @@
 {
   "name": "lomi. / Documentation",
   "short_name": "lomi. Docs",
-  "description": "Documentation website for lomi. - The open source payment processing platform powering West-African businesses",
+  "description": "Documentation website for lomi. - The open-source payment processing platform powering West-African businesses",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

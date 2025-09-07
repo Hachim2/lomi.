@@ -56,11 +56,11 @@
 
 lomi. is a unified payment orchestration platform that integrates multiple payment service providers and provides a seamless experience for merchants and their customers across West Africa and beyond. Our platform simplifies product and subscriptions billing while ensuring the highest levels of security, reliability, and compliance.
 
-## Open Source Roadmap
+## Open-source Roadmap
 
 We are progressively open-sourcing the entire lomi. project:
 
-- **Currently Open Source**:
+- **Currently Open-source**:
   - Merchant dashboard : **[apps/website](https://github.com/lomiafrica/website)**
   - Documentation website: **[apps/developers](https://github.com/lomiafrica/lomi.)**
 
@@ -200,7 +200,7 @@ For comprehensive documentation, visit [docs.lomi.africa](https://docs.lomi.afri
 
 This project is dual-licensed:
 
-1. The majority of the codebase is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). This means you can freely use, modify, and distribute this code while ensuring that any modifications you make are also open source.
+1. The majority of the codebase is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). This means you can freely use, modify, and distribute this code while ensuring that any modifications you make are also open-source.
 
 2. Certain files marked with `/* @proprietary license */` are under lomi.africa's LLC Commercial License. These files require a valid commercial license from lomi. for production use.
 
