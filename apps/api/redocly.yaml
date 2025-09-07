@@ -1,0 +1,24 @@
+theme:
+  openapi:
+    theme:
+      colors:
+        primary:
+          main: "#2E5BFF"
+      typography:
+        fontFamily: "Inter, system-ui, -apple-system, sans-serif"
+        headings:
+          fontFamily: "Inter, system-ui, -apple-system, sans-serif"
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: Node.js
+        - lang: Python
+    hideDownloadButton: true
+    expandResponses: "200,201"
+    noAutoAuth: true
+    requiredPropsFirst: true
+    sortPropsAlphabetically: true
+    showExtensions: false
+    hideHostname: false
+    jsonSampleExpandLevel: 3
+    sideNavStyle: "path-only" 

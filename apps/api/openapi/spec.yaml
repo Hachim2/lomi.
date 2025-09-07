@@ -1,0 +1,2662 @@
+openapi: 3.0.0
+info:
+  title: lomi.africa Payments API
+  version: 1.0.0
+  description: API of lomi. payment orchestration platform
+servers:
+  - url: https://api.lomi.africa/v1
+    
+# API Schema to Database Table Mapping:
+# - Merchant (API) -> merchants (DB)
+# - Product (API) -> merchant_products (DB)
+# - SubscriptionPlan (API) -> subscription_plans (DB)
+# - Subscription (API) -> merchant_subscriptions (DB)
+# - Transaction (API) -> transactions (DB)
+# - Customer (API) -> customers (DB)
+# - PaymentLink (API) -> payment_links (DB)
+# - Refund (API) -> refunds (DB)
+# - Webhook (API) -> webhooks (DB)
+# - CheckoutSession (API) -> checkout_sessions (DB)
+# - MerchantAccount (API) -> merchant_accounts (DB)
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+      
+  responses:
+    UnauthorizedError:
+      description: API key is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    ValidationError:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+            
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+            
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          
+    Currency:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/CurrencyCode'
+        name:
+          type: string
+      required:
+        - code
+        - name
+          
+    Fee:
+      type: object
+      properties:
+        fee_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        transaction_type:
+          $ref: '#/components/schemas/TransactionType'
+        fee_type:
+          $ref: '#/components/schemas/FeeType'
+        percentage:
+          type: number
+          minimum: -100
+          maximum: 100
+        fixed_amount:
+          type: number
+          minimum: 0
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        payment_method_code:
+          $ref: '#/components/schemas/PaymentMethodCode'
+        provider_code:
+          $ref: '#/components/schemas/ProviderCode'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - fee_id
+        - name
+        - transaction_type
+        - fee_type
+        - percentage
+        - fixed_amount
+        - currency_code
+          
+    Merchant:
+      type: object
+      properties:
+        merchant_id:
+          type: string
+          format: uuid
+        name: 
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        organization_id:
+          type: string
+          format: uuid
+        country:
+          type: string
+        mrr:
+          type: number
+        arr:
+          type: number
+        merchant_lifetime_value:
+          type: number
+        retry_payment_every:
+          type: integer
+        total_retries:
+          type: integer
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+            
+    ConnectedProvider:
+      type: object
+      properties:
+        provider_code:
+          $ref: '#/components/schemas/ProviderCode'
+        name:
+          type: string
+        description:
+          type: string
+        is_connected:
+          type: boolean
+        provider_merchant_id:
+          type: string
+        provider_business_type:
+          $ref: '#/components/schemas/ProviderBusinessType'
+        phone_number:
+          type: string
+        is_phone_verified:
+          type: boolean
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+            
+    OrganizationProviderSettings:
+      type: object
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+        provider_code:
+          $ref: '#/components/schemas/ProviderCode'
+        provider_merchant_id:
+          type: string
+        is_connected:
+          type: boolean
+        phone_number:
+          type: string
+        is_phone_verified:
+          type: boolean
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - organization_id
+        - provider_code
+        - is_connected
+        - is_phone_verified
+        
+    CreateProduct:
+      type: object  
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 0
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        is_active:
+          type: boolean
+          default: true
+      required:
+        - name
+        - price
+        - currency_code
+        
+    Product:
+      allOf:
+        - $ref: '#/components/schemas/CreateProduct'
+        - type: object
+          properties:
+            product_id:
+              type: string
+              format: uuid
+            merchant_id:
+              type: string
+              format: uuid
+            organization_id:
+              type: string
+              format: uuid
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+            
+    CreateSubscriptionPlan:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+          minimum: 0
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+          default: 'XOF'
+        billing_frequency:
+          $ref: '#/components/schemas/BillingFrequency'
+        failed_payment_action:
+          $ref: '#/components/schemas/FailedPaymentAction'
+        charge_day:
+          type: integer
+          minimum: 1
+          maximum: 31
+        metadata:
+          type: object
+        is_active:
+          type: boolean
+          default: true
+        first_payment_type:
+          $ref: '#/components/schemas/FirstPaymentType'
+          default: 'initial'
+      required:
+        - name
+        - amount
+        - currency_code
+        - billing_frequency
+        
+    SubscriptionPlan:
+      allOf:
+        - $ref: '#/components/schemas/CreateSubscriptionPlan'
+        - type: object
+          properties:
+            plan_id:
+              type: string
+              format: uuid
+            merchant_id:
+              type: string
+              format: uuid
+            organization_id:
+              type: string
+              format: uuid
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+            
+    Subscription:
+      type: object
+      properties:
+        subscription_id:
+          type: string
+          format: uuid
+        merchant_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        plan_id:
+          type: string
+          format: uuid
+        customer_id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/SubscriptionStatus'
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        next_billing_date:
+          type: string
+          format: date
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - subscription_id
+        - merchant_id
+        - organization_id
+        - plan_id
+        - customer_id
+        - status
+        - start_date
+            
+    CreateSubscription:
+      type: object
+      properties:
+        merchant_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        plan_id:
+          type: string
+          format: uuid
+        customer_id:
+          type: string
+          format: uuid
+        start_date:
+          type: string
+          format: date
+        metadata:
+          type: object
+      required:
+        - merchant_id
+        - organization_id
+        - plan_id
+        - customer_id
+        - start_date
+        
+    CreateTransaction:
+      type: object
+      properties:
+        merchant_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        customer_id:
+          type: string
+          format: uuid  
+        product_id:
+          type: string
+          format: uuid
+        subscription_id:
+          type: string
+          format: uuid
+        transaction_type:
+          $ref: '#/components/schemas/TransactionType'
+        description:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+        metadata:
+          type: object
+        gross_amount:
+          type: number
+          minimum: 0
+        fee_amount:
+          type: number
+        net_amount:
+          type: number
+          minimum: 0
+        fee_reference:
+          type: string
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        provider_code:
+          $ref: '#/components/schemas/ProviderCode'
+        payment_method_code:
+          $ref: '#/components/schemas/PaymentMethodCode'
+      required:
+        - merchant_id
+        - organization_id
+        - customer_id
+        - transaction_type
+        - gross_amount
+        - fee_amount
+        - net_amount
+        - fee_reference
+        - currency_code
+        - provider_code
+        - payment_method_code
+        
+    Transaction:
+      allOf:
+        - $ref: '#/components/schemas/CreateTransaction'
+        - type: object
+          properties:
+            transaction_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/TransactionStatus'
+            quantity:
+              type: integer
+              minimum: 1
+              default: 1
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+            
+    CreateCheckoutSession:
+      type: object
+      properties:
+        merchant_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          description: Title for the checkout session
+        public_description:
+          type: string
+          description: Public description for the checkout session
+        product_id:
+          type: string
+          format: uuid
+        subscription_id:
+          type: string
+          format: uuid
+        plan_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        success_url:
+          type: string
+          format: uri
+        cancel_url:
+          type: string
+          format: uri
+        allowed_providers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderCode'
+          description: Specific payment providers to enable for this checkout session
+        customer_id:
+          type: string
+          format: uuid
+        customer_email:
+          type: string
+          format: email
+        customer_phone:
+          type: string
+        customer_name:
+          type: string
+        allow_coupon_code:
+          type: boolean
+          default: false
+          description: Whether a coupon code is allowed for this checkout session
+        allow_quantity:
+          type: boolean
+          default: false
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+        metadata:
+          type: object
+      required:
+        - merchant_id
+        - organization_id
+        - amount
+        - currency_code
+        - success_url
+        - cancel_url
+        - allowed_providers
+        
+    CheckoutSession:
+      allOf:
+        - $ref: '#/components/schemas/CreateCheckoutSession'
+        - type: object
+          properties:
+            checkout_session_id:
+              type: string
+              format: uuid
+            payment_link_id:
+              type: string
+              format: uuid
+            url:
+              type: string
+              format: uri
+            allow_quantity:
+              type: boolean
+              default: false
+            quantity:
+              type: integer
+              minimum: 1
+              default: 1
+            status:
+              $ref: '#/components/schemas/CheckoutSessionStatus'
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+            expires_at:
+              type: string
+              format: date-time
+            
+    Provider:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ProviderCode'
+        name:
+          type: string
+        description:
+          type: string
+        payment_methods:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentMethodCode'
+        is_connected:
+          type: boolean
+            
+    CurrencyCode:
+      type: string
+      enum:
+        - XOF
+        - USD
+        - EUR
+        - GHS
+        - NGN
+        - KES
+        - MRO
+        
+    TransactionType:
+      type: string
+      enum:
+        - payment
+        - instalment
+        
+    TransactionStatus:
+      type: string
+      enum:
+        - pending
+        - completed
+        - failed
+        - refunded
+        - expired
+        
+    ProviderCode:
+      type: string
+      enum:
+        - ORANGE
+        - WAVE
+        - ECOBANK
+        - MTN
+        - NOWPAYMENTS
+        - APPLE
+        - GOOGLE
+        - MOOV
+        - AIRTEL
+        - MPESA
+        - OPAY
+        - PAYPAL
+        - OZOW
+        - OTHER
+        
+    PaymentMethodCode:
+      type: string
+      enum:
+        - CARDS
+        - MOBILE_MONEY
+        - E_WALLET
+        - APPLE_PAY
+        - GOOGLE_PAY
+        - USSD
+        - QR_CODE
+        - BANK_TRANSFER
+        - CRYPTO
+        - PAYPAL
+        - OTHER
+        
+    BillingFrequency:
+      type: string
+      enum:
+        - weekly
+        - bi-weekly
+        - monthly
+        - bi-monthly
+        - quarterly
+        - semi-annual
+        - yearly
+        
+    Frequency:
+      type: string
+      enum:
+        - weekly
+        - bi-weekly
+        - monthly
+        - bi-monthly
+        - quarterly
+        - semi-annual
+        - yearly
+        
+    FailedPaymentAction:
+      type: string
+      enum:
+        - cancel
+        - pause
+        - continue
+        
+    FirstPaymentType:
+      type: string
+      enum:
+        - initial
+        - non_initial
+        
+    Refund:
+      type: object
+      properties:
+        refund_id:
+          type: string
+          format: uuid
+        transaction_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+        refunded_amount:
+          type: number
+        fee_amount:
+          type: number
+        status:
+          $ref: '#/components/schemas/RefundStatus'
+        reason:
+          type: string
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - refund_id
+        - transaction_id
+        - amount
+        - refunded_amount
+        - fee_amount
+        - status
+
+    CreateRefund:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          minimum: 0
+        reason:
+          type: string
+        metadata:
+          type: object
+      required:
+        - transaction_id
+        - amount
+
+    Customer:
+      type: object
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+        merchant_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        whatsapp_number:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+        postal_code:
+          type: string
+        is_business:
+          type: boolean
+          default: false
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - customer_id
+        - merchant_id
+        - organization_id
+        - name
+
+    CreateCustomer:
+      type: object
+      properties:
+        merchant_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        whatsapp_number:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+        postal_code:
+          type: string
+        is_business:
+          type: boolean
+          default: false
+        metadata:
+          type: object
+      required:
+        - merchant_id
+        - organization_id
+        - name
+
+    MerchantOrganizationLink:
+      type: object
+      properties:
+        merchant_org_id:
+          type: string
+          format: uuid
+        merchant_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        role:
+          $ref: '#/components/schemas/MemberRole'
+        store_handle:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - merchant_org_id
+        - organization_id
+        - role
+        - store_handle
+        
+    MemberRole:
+      type: string
+      enum:
+        - Admin
+        - Member
+
+    MerchantAccount:
+      type: object
+      properties:
+        account_id:
+          type: string
+          format: uuid
+        merchant_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        balance:
+          type: number
+          minimum: 0
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - account_id
+        - organization_id
+        - balance
+        - currency_code
+
+    PaymentLinkType:
+      type: string
+      enum:
+        - product
+        - plan
+        - instant
+
+    CreatePaymentLink:
+      type: object
+      properties:
+        merchant_id:
+          type: string
+          format: uuid
+          description: "ID of the merchant creating the link. Note: This is typically inferred from the API key via authentication middleware and does not need to be provided in the request body."
+        organization_id:
+          type: string
+          format: uuid
+        link_type:
+          $ref: '#/components/schemas/PaymentLinkType'
+        product_id:
+          type: string
+          format: uuid
+        plan_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        public_description:
+          type: string
+        price:
+          type: number
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        allowed_providers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderCode'
+          description: Array of payment providers allowed for this payment link
+        allow_coupon_code:
+          type: boolean
+        allow_quantity:
+          type: boolean
+          default: false
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+        is_active:
+          type: boolean
+        expires_at:
+          type: string
+          format: date-time
+        success_url:
+          type: string
+          format: uri
+        cancel_url:
+          type: string
+          format: uri
+        metadata:
+          type: object
+      required:
+        # merchant_id is now inferred from API Key
+        - link_type
+        - title
+        - currency_code
+      oneOf:
+        - properties:
+            link_type:
+              enum: ['product']
+            product_id:
+              type: string
+              format: uuid
+          required: ['product_id']
+          not:
+            anyOf:
+              - required: ['plan_id']
+              - required: ['price']
+        - properties:
+            link_type:
+              enum: ['plan']
+            plan_id:
+              type: string
+              format: uuid
+          required: ['plan_id']
+          not:
+            anyOf:
+              - required: ['product_id']
+              - required: ['price']
+        - properties:
+            link_type:
+              enum: ['instant']
+            price:
+              type: number
+          required: ['price']
+          not:
+            anyOf:
+              - required: ['product_id']
+              - required: ['plan_id']
+
+    PaymentLink:
+      allOf:
+        - $ref: '#/components/schemas/CreatePaymentLink'
+        - type: object
+          properties:
+            link_id:
+              type: string
+              format: uuid
+            organization_id:
+              type: string
+              format: uuid
+            url:
+              type: string
+              format: uri
+            allow_quantity:
+              type: boolean
+              default: false
+            quantity:
+              type: integer
+              minimum: 1
+              default: 1
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+
+    # Note: The following webhook-related schemas are not currently implemented in the database schema (forapi.sql)
+    # but are included here for potential future implementation. If webhooks functionality is needed,
+    # a corresponding webhooks table should be added to the database.
+    WebhookEvent:
+      type: string
+      enum:
+        - PAYMENT_CREATED
+        - PAYMENT_SUCCEEDED
+        - PAYMENT_FAILED
+        - REFUND_CREATED
+        - REFUND_COMPLETED
+        - SUBSCRIPTION_CREATED
+        - SUBSCRIPTION_RENEWED
+        - SUBSCRIPTION_CANCELED
+        - CHECKOUT_COMPLETED
+        - PROVIDER_STATUS_CHANGED
+
+    CreateWebhook:
+      type: object
+      properties:
+        merchant_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        authorized_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEvent'
+        is_active:
+          type: boolean
+          default: true
+        metadata:
+          type: object
+      required:
+        - merchant_id
+        - organization_id
+        - url
+        - authorized_events
+
+    Webhook:
+      allOf:
+        - $ref: '#/components/schemas/CreateWebhook'
+        - type: object
+          properties:
+            webhook_id:
+              type: string
+              format: uuid
+            verification_token:
+              type: string
+              description: "Secret token used to verify webhook signatures. Format: whsec_*"
+            last_triggered_at:
+              type: string
+              format: date-time
+            last_payload:
+              type: object
+            last_response_status:
+              type: integer
+            last_response_body:
+              type: string
+            retry_count:
+              type: integer
+              default: 0
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+
+    RefundStatus:
+      type: string
+      enum:
+        - pending
+        - completed
+        - failed
+
+    CheckoutSessionStatus:
+      type: string
+      enum:
+        - open
+        - completed
+        - expired
+
+    SubscriptionStatus:
+      type: string
+      enum:
+        - pending
+        - active
+        - paused
+        - cancelled
+        - expired
+        - past_due
+        - trial
+
+    PayoutStatus:
+      type: string
+      enum:
+        - pending
+        - processing
+        - completed
+        - failed
+
+    OrganizationStatus:
+      type: string
+      enum:
+        - active
+        - inactive
+        - suspended
+
+    FeeType:
+      type: string
+      enum:
+        - percentage
+        - fixed
+        - both
+        
+    ProviderBusinessType:
+      type: string
+      enum:
+        - fintech
+        - other
+  
+security:
+  - ApiKeyAuth: []
+  
+paths:
+  /ping:
+    get:
+      summary: Ping the API
+      security: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: pong
+                    
+  /merchants/{merchant_id}:
+    get:
+      summary: Get merchant details
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Merchant'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+                
+  /merchants/{merchant_id}/providers:
+    get:
+      summary: List connected payment providers for a merchant
+      operationId: merchantProviders
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectedProvider'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+                
+  /products:
+    post:
+      summary: Create a new product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProduct'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+                
+    get:
+      summary: List products for a merchant
+      parameters:
+        - name: merchant_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /products/{product_id}:
+    get:
+      summary: Get product details
+      description: Get details of a specific product
+      operationId: getProduct
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Product details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: Update product status
+      description: Update only the active status of a product. Core details (name, price, etc.) cannot be changed after creation.
+      operationId: updateProductStatus
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_active:
+                  type: boolean
+              required:
+                - is_active
+      responses:
+        '200':
+          description: Product status updated successfully
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      summary: Delete product
+      description: Delete a product
+      operationId: deleteProduct
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Product deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+                  
+  /subscriptions:
+    post:
+      summary: Create a subscription plan
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionPlan'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+                
+    get:
+      summary: List subscription plans for a merchant  
+      parameters:
+        - name: merchant_id
+          in: query
+          required: true
+          description: The ID of the merchant whose plans to list.
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of items to return.
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          required: false
+          description: Number of items to skip before starting to collect the result set.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionPlan'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /merchants/{merchant_id}/subscriptions:
+    post:
+      summary: Create a subscription plan for a merchant
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          description: The ID of the merchant for whom to create the plan.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionPlan'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+                
+    get:
+      summary: List subscription plans for a merchant  
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          description: The ID of the merchant whose plans to list.
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          required: false
+        - name: offset
+          in: query
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionPlan'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /merchants/{merchant_id}/subscriptions/{plan_id}:
+    get:
+      summary: Get subscription plan details for a merchant
+      description: Get details of a specific subscription plan belonging to a merchant
+      operationId: getSubscriptionPlan
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          description: The ID of the merchant.
+          schema:
+            type: string
+            format: uuid
+        - name: plan_id
+          in: path
+          required: true
+          description: The ID of the subscription plan.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Subscription plan details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: Update subscription plan
+      description: Update specific fields (is_active, metadata) of a subscription plan. Core details are immutable via API.
+      operationId: updateSubscriptionPlan
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          description: The ID of the merchant.
+          schema:
+            type: string
+            format: uuid
+        - name: plan_id
+          in: path
+          required: true
+          description: The ID of the subscription plan.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_active:
+                  type: boolean
+                metadata:
+                  type: object
+              minProperties: 1
+              example:
+                is_active: false
+      responses:
+        '200':
+          description: Subscription plan updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      summary: Delete subscription plan
+      description: Delete a subscription plan belonging to a merchant
+      operationId: deleteSubscriptionPlan
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          description: The ID of the merchant.
+          schema:
+            type: string
+            format: uuid
+        - name: plan_id
+          in: path
+          required: true
+          description: The ID of the subscription plan.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Subscription plan deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /transactions:
+    get:
+      summary: List transactions for a merchant
+      operationId: transactionsList
+      parameters:
+        - name: merchant_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+                
+  /providers:
+    get:
+      summary: List available payment providers
+      operationId: providers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' 
+
+  /refunds:
+    post:
+      summary: Create a refund
+      description: Initiate a refund for a transaction
+      operationId: createRefund
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRefund'
+      responses:
+        '201':
+          description: Refund created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /refunds/{refund_id}:
+    get:
+      summary: Get refund details
+      description: Get details of a specific refund
+      operationId: getRefund
+      parameters:
+        - name: refund_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Refund details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: Update refund status
+      description: Update the status of a refund
+      operationId: updateRefund
+      parameters:
+        - name: refund_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [completed, failed]
+                metadata:
+                  type: object
+              required:
+                - status
+      responses:
+        '200':
+          description: Refund updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError' 
+
+  /customers:
+    post:
+      summary: Create a customer
+      description: Create a new customer for a merchant
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomer'
+      responses:
+        '201':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    get:
+      summary: List customers
+      description: List all customers for a merchant
+      operationId: listCustomers
+      parameters:
+        - name: merchant_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: email
+          in: query
+          schema:
+            type: string
+            format: email
+        - name: phone_number
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /customers/{customer_id}:
+    get:
+      summary: Get customer details
+      description: Get details of a specific customer
+      operationId: getCustomer
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Customer details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: Update customer
+      description: Update customer details
+      operationId: updateCustomer
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                phone_number:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                address:
+                  type: object
+                  properties:
+                    street:
+                      type: string
+                    city:
+                      type: string
+                    state:
+                      type: string
+                    postal_code:
+                      type: string
+                    country:
+                      type: string
+                metadata:
+                  type: object
+      responses:
+        '200':
+          description: Customer updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      summary: Delete customer
+      description: Delete a customer
+      operationId: deleteCustomer
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Customer deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError' 
+
+  /payment-links:
+    post:
+      summary: Create a payment link
+      description: Create a new payment link for collecting payments
+      operationId: createPaymentLink
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentLink'
+      responses:
+        '201':
+          description: Payment link created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLink'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    get:
+      summary: List payment links
+      description: List all payment links for a merchant
+      operationId: listPaymentLinks
+      parameters:
+        - name: merchant_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: link_type
+          in: query
+          schema:
+            $ref: '#/components/schemas/PaymentLinkType'
+        - name: currency_code
+          in: query
+          schema:
+            $ref: '#/components/schemas/CurrencyCode'
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of payment links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentLink'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /payment-links/{link_id}:
+    get:
+      summary: Get payment link details
+      description: Get details of a specific payment link
+      operationId: getPaymentLink
+      parameters:
+        - name: link_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Payment link details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLink'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: Update payment link
+      description: |
+        Update configurable details of a payment link. 
+        **Important:** Core link details (title, description, price/product/plan, currency, quantity settings) are fixed after creation and cannot be changed via the API. To modify these, create a new link.
+      operationId: updatePaymentLink
+      parameters:
+        - name: link_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                # Fields allowed for API update:
+                expires_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: Set to null to remove expiration
+                success_url:
+                  type: string
+                  format: uri
+                cancel_url:
+                  type: string
+                  format: uri
+                allowed_providers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ProviderCode'
+                  description: Update the list of allowed payment providers
+                allow_coupon_code:
+                  type: boolean
+                  description: Enable or disable coupon code usage for this link
+                metadata:
+                  type: object
+              example:
+                expires_at: "2024-12-31T23:59:59Z"
+                success_url: "https://example.com/new-success"
+                allow_coupon_code: true
+                metadata: { "key": "value" }
+      responses:
+        '200':
+          description: Payment link updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLink'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      summary: Delete payment link
+      description: Delete a payment link
+      operationId: deletePaymentLink
+      parameters:
+        - name: link_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Payment link deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError' 
+
+  /webhooks:
+    post:
+      summary: Register a new webhook endpoint
+      description: Create a new webhook endpoint for receiving event notifications
+      operationId: createWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebhook'
+      responses:
+        '201':
+          description: Webhook endpoint created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    get:
+      summary: List webhook endpoints
+      description: List all webhook endpoints for a merchant
+      operationId: listWebhooks
+      parameters:
+        - name: merchant_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: organization_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of webhook endpoints
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /webhooks/{webhook_id}:
+    get:
+      summary: Get webhook details
+      description: Get details of a specific webhook endpoint
+      operationId: getWebhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Webhook details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: Update webhook configuration
+      description: Update webhook endpoint configuration
+      operationId: updateWebhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                organization_id:
+                  type: string
+                  format: uuid
+                url:
+                  type: string
+                  format: uri
+                authorized_events:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/WebhookEvent'
+                is_active:
+                  type: boolean
+                metadata:
+                  type: object
+      responses:
+        '200':
+          description: Webhook configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      summary: Delete webhook endpoint
+      description: Delete a webhook endpoint
+      operationId: deleteWebhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Webhook endpoint deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError' 
+
+  /checkout-sessions:
+    post:
+      summary: Create a checkout session
+      description: Create a new checkout session for collecting payments
+      operationId: createCheckoutSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCheckoutSession'
+      responses:
+        '201':
+          description: Checkout session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutSession'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    get:
+      summary: List checkout sessions
+      description: List all checkout sessions for a merchant
+      operationId: listCheckoutSessions
+      parameters:
+        - name: merchant_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: checkout_session_id
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - open
+              - completed
+              - expired
+      responses:
+        '200':
+          description: List of checkout sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CheckoutSession'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+  /checkout-sessions/{session_id}:
+    get:
+      summary: Get a checkout session by ID
+      description: Get details of a specific checkout session
+      operationId: getCheckoutSession
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Checkout session details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutSession'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /transactions/{transaction_id}:
+    get:
+      summary: Get transaction details
+      description: Get details of a specific transaction by its ID
+      operationId: getTransactionById
+      parameters:
+        - name: transaction_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Transaction details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError' 
+       
+  /merchants/{merchant_id}/mrr:
+    get:
+      summary: Get merchant monthly recurring revenue
+      description: Retrieve current monthly recurring revenue
+      operationId: getMerchantMrr
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Monthly recurring revenue retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  merchant_id:
+                    type: string
+                    format: uuid
+                  mrr:
+                    type: number
+                    description: Monthly Recurring Revenue
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /merchants/{merchant_id}/arr:
+    get:
+      summary: Get merchant annual recurring revenue
+      description: Retrieve current annual recurring revenue
+      operationId: getMerchantArr
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Annual recurring revenue retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  merchant_id:
+                    type: string
+                    format: uuid
+                  arr:
+                    type: number
+                    description: Annual Recurring Revenue
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /merchants/{merchant_id}/balance:
+    get:
+      summary: Get merchant account balance
+      description: Retrieve current account balance for a merchant
+      operationId: getMerchantBalance
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: currency_code
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/CurrencyCode'
+          description: Filter balance by currency
+      responses:
+        '200':
+          description: Account balance retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    merchant_id:
+                      type: string
+                      format: uuid
+                    currency_code:
+                      $ref: '#/components/schemas/CurrencyCode'
+                    balance:
+                      type: number
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /merchants/{merchant_id}/accounts:
+    get:
+      summary: List merchant accounts
+      description: Retrieve all accounts belonging to a merchant with their balances
+      operationId: listMerchantAccounts
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: currency_code
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/CurrencyCode'
+          description: Filter accounts by currency
+      responses:
+        '200':
+          description: List of merchant accounts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MerchantAccount'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  
+  /merchants/{merchant_id}/transactions/summary:
+    get:
+      summary: Get transaction summary for a merchant
+      description: Retrieve summary of transactions including total counts and amounts by status
+      operationId: getMerchantTransactionsSummary
+      parameters:
+        - name: merchant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Start date for filtering transactions
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: End date for filtering transactions
+        - name: currency_code
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/CurrencyCode'
+          description: Filter transactions by currency
+      responses:
+        '200':
+          description: Transaction summary retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_count:
+                    type: integer
+                  total_gross_amount:
+                    type: number
+                  total_fee_amount:
+                    type: number
+                  total_net_amount:
+                    type: number
+                  by_status:
+                    type: object
+                    properties:
+                      pending:
+                        type: integer
+                      completed:
+                        type: integer
+                      failed:
+                        type: integer
+                      refunded:
+                        type: integer
+                      expired:
+                        type: integer
+                  by_payment_method:
+                    type: object
+                    additionalProperties:
+                      type: integer
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /customer-subscriptions:
+    get:
+      summary: List customer subscriptions
+      description: List all subscriptions for a merchant
+      operationId: listCustomerSubscriptions
+      parameters:
+        - name: merchant_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: customer_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - pending
+              - active
+              - paused
+              - cancelled
+              - expired
+              - past_due
+              - trial
+      responses:
+        '200':
+          description: List of subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+          
+  /customer-subscriptions/{subscription_id}:
+    get:
+      summary: Get subscription details
+      description: Get details of a specific subscription
+      operationId: getSubscription
+      parameters:
+        - name: subscription_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: merchant_id
+          in: query
+          required: true
+          description: The ID of the merchant owning the subscription.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Subscription details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+          
+    patch:
+      summary: Update subscription
+      description: Update subscription details
+      operationId: updateSubscription
+      parameters:
+        - name: subscription_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: merchant_id
+          in: query
+          required: true
+          description: The ID of the merchant owning the subscription.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                    - cancelled
+                end_date:
+                  type: string
+                  format: date
+                next_billing_date:
+                  type: string
+                  format: date
+                metadata:
+                  type: object
+      responses:
+        '200':
+          description: Subscription updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+          
+    delete:
+      summary: Cancel subscription
+      description: Cancel a subscription
+      operationId: cancelSubscription
+      parameters:
+        - name: subscription_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: merchant_id
+          in: query
+          required: true
+          description: The ID of the merchant owning the subscription.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Subscription cancelled successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /webhooks/{webhook_id}/regenerate-secret:
+    post:
+      summary: Regenerate webhook secret
+      description: Generate a new verification token for a webhook endpoint
+      operationId: regenerateWebhookSecret
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Webhook secret regenerated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhook_id:
+                    type: string
+                    format: uuid
+                  verification_token:
+                    type: string
+                    description: "New secret token used to verify webhook signatures. Format: whsec_*"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /webhooks/{webhook_id}/test:
+    post:
+      summary: Send test webhook
+      description: Send a test event to a webhook endpoint to verify it's working correctly
+      operationId: testWebhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Test webhook sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhook_id:
+                    type: string
+                    format: uuid
+                  success:
+                    type: boolean
+                  status_code:
+                    type: integer
+                  response_body:
+                    type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'

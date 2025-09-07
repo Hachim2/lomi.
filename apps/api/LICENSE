@@ -1,0 +1,65 @@
+  This project is mostly licensed under the GNU Affero General Public 
+License (AGPL) as described below. However, certain files within this 
+project are licensed under a different commercial license. These files 
+are clearly marked with the following comment at the top of the file: 
+/* @proprietary license */ Files with this comment are not licensed 
+under the AGPL v3, but instead are subject to the commercial license 
+terms defined later in this file.
+
+--------------------------------------------------------------------
+
+  Copyright (C) 2025 lomi. LLC
+
+  This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+
+--------------------------------------------------------------------
+
+  The lomi. Commercial License (the "Commercial License") 
+  Copyright (c) 2025—present lomi. LLC
+
+  With regard to lomi.africa's Software and its files under the "Commercial License" :
+This part of the software and associated documentation files (the "Software") may
+only be used in production; they are the property of lomi.africa, registered in
+Côte d'Ivoire. The Software is protected by copyright laws, if you (and any entity
+that you represent) have agreed to, and are in compliance with, the Terms 
+available at https://lomi.africa/terms, or other agreements governing the use of 
+the Software, as mutually agreed by you and lomi.africa, and otherwise have a valid
+lomi.africa Enterprise Account.
+
+Subject to the foregoing sentence, you are free to modify this Software and publish
+patches to the Software. You agree that lomi.africa and/or its licensors (as applicable)
+retain all right, title and interest in and to all such modifications and/or patches,
+and all such modifications and/or patches may only be used, copied, modified, displayed,
+distributed, or otherwise exploited as part of the lomi.africa payment orchestration
+platform, with transaction fees applied as per the lomi.africa pricing policy. 
+
+Notwithstanding the foregoing, you may copy and modify the Software for development
+and testing purposes, without incurring any fees. You agree that lomi.africa and/or
+its licensors (as applicable) retain all right, title and interest in and to all 
+such modifications. You are not granted any other rights beyond what is expressly
+stated herein.
+Subject to the foregoing, it is forbidden to copy, merge, publish, distribute, 
+sublicense, and/or sell the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+For all third party components incorporated into the lomi.africa Software, those
+components are licensed under the original license provided by the owner of the
+applicable component.
