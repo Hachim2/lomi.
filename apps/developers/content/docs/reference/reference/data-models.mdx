@@ -1,0 +1,335 @@
+---
+title: "Data models"
+description: "This section describes the structure of common data objects returned by our API endpoints documented in this core reference."
+---
+
+## Merchant object
+
+Represents a merchant account on lomi. Returned by the `` `GET /merchants/{id}` `` endpoint.
+
+| Property                  | Type     | Description                                                                                         |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------- |
+| `` `merchant_id` ``             | `` `string` ``   | Unique identifier for the merchant account.                                                         |
+| `` `name` ``                    | `` `string` ``   | The registered name of the merchant.                                                                |
+| `` `email` ``                   | `` `string` ``   | The primary contact email address for the merchant.                                                 |
+| `` `phone_number` ``            | `` `string` ``   | The primary contact phone number for the merchant.                                                  |
+| `` `country` ``                 | `` `string` ``   | The two-letter ISO country code where the merchant is based (e.g., `` `"SN"` ``).                          |
+| `` `mrr` ``                     | `` `number` ``   | Monthly Recurring Revenue, calculated based on active subscriptions (in smallest currency unit).    |
+| `` `arr` ``                     | `` `number` ``   | Annual Recurring Revenue, calculated based on active subscriptions (in smallest currency unit).     |
+| `` `merchant_lifetime_value` `` | `` `number` ``   | Total value processed for this merchant (in smallest currency unit).                                |
+| `` `retry_payment_every` ``     | `` `number` ``   | The number of days between automatic retry attempts for failed subscription payments.               |
+| `` `total_retries` ``           | `` `number` ``   | The total number of automatic retry attempts configured for failed subscription payments.           |
+| `` `metadata` ``                | `` `object` ``   | A set of key-value pairs that you can attach to the object. Useful for storing additional information. |
+| `` `created_at` ``              | `` `string` ``   | Timestamp (ISO 8601) indicating when the merchant account was created.                               |
+| `` `updated_at` ``              | `` `string` ``   | Timestamp (ISO 8601) indicating when the merchant account was last updated.                         |
+
+**Example:**
+
+```json filename="Example Merchant object"
+{
+  "merchant_id": "904d003c-3736-41d4-90a5-9de74d404fd7",
+  "name": "Test Merchant",
+  "email": "merchant@example.com",
+  "phone_number": "+123456789",
+  "country": "SN",
+  "mrr": 50000,
+  "arr": 600000,
+  "merchant_lifetime_value": 1200000,
+  "retry_payment_every": 3,
+  "total_retries": 5,
+  "metadata": {
+    "industry": "e-commerce"
+  },
+  "created_at": "2023-01-15T10:30:00Z",
+  "updated_at": "2023-02-20T14:45:00Z"
+}
+```
+
+## Transaction object
+
+Represents a single transaction, such as a payment or refund. Returned by transaction endpoints (`` `GET /transactions` ``, `` `GET /transactions/{id}` ``).
+
+| Property                  | Type   | Description                                                                        |
+| ------------------------- | ------ | ---------------------------------------------------------------------------------- |
+| `` `transaction_id` ``          | `` `string` `` | Unique identifier for the transaction (UUID).                                      |
+| `` `merchant_id` ``             | `` `string` `` | Identifier for the merchant associated with this transaction.                      |
+| `` `organization_id` ``         | `` `string` `` | Identifier for the organization associated with this transaction.                    |
+| `` `customer_id` ``             | `` `string` `` | Identifier for the customer associated with this transaction (nullable).           |
+| `` `gross_amount` ``            | `` `number` `` | The total amount of the transaction in the smallest currency unit.                  |
+| `` `fee_amount` ``              | `` `number` `` | The fee amount deducted from the transaction in the smallest currency unit.        |
+| `` `net_amount` ``              | `` `number` `` | The net amount received by the merchant (`` `gross_amount` `` - `` `fee_amount` ``).          |
+| `` `fee_reference` ``           | `` `string` `` | Identifier for the fee structure applied (nullable).                               |
+| `` `currency_code` ``           | `` `string` `` | Three-letter ISO currency code (e.g., `` `"XOF"` ``).                                    |
+| `` `payment_method_code` ``     | `` `string` `` | Code identifying the payment method used (e.g., `` `"MOBILE_MONEY"` ``).                 |
+| `` `provider_code` ``           | `` `string` `` | Code identifying the payment provider used (e.g., `` `"WAVE"` ``).                      |
+| `` `provider_transaction_id` `` | `` `string` `` | The transaction ID from the external payment provider system (nullable).            |
+| `` `transaction_type` ``        | `` `string` `` | Type of transaction (e.g., `` `"payment"` ``, `` `"refund"` ``).                               |
+| `` `product_id` ``              | `` `string` `` | Identifier for the product associated with this transaction (nullable).            |
+| `` `subscription_id` ``         | `` `string` `` | Identifier for the subscription associated with this transaction (nullable).       |
+| `` `status` ``                  | `` `string` `` | Current status of the transaction (`` `pending` ``, `` `completed` ``, `` `failed` ``, `` `refunded` ``, `` `expired` ``). |
+| `` `description` ``             | `` `string` `` | Description provided for the transaction (nullable).                               |
+| `` `metadata` ``                | `` `object` `` | Key-value pairs for storing additional information about the transaction (nullable). |
+| `` `created_at` ``              | `` `string` `` | Timestamp (ISO 8601) indicating when the transaction was created.                 |
+| `` `updated_at` ``              | `` `string` `` | Timestamp (ISO 8601) indicating when the transaction was last updated.           |
+| `` `environment` ``             | `` `string` `` | Indicates the environment (`` `test` `` or `` `live` ``) where the transaction occurred.       |
+
+**Example:**
+
+```json filename="Example Transaction object"
+{
+  "transaction_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "merchant_id": "904d003c-3736-41d4-90a5-9de74d404fd7",
+  "organization_id": "0979ec77-9fb1-4c9a-8c55-d7fb6c182c9c",
+  "customer_id": "c47ac10b-58cc-4372-a567-0e02b2c3d480",
+  "gross_amount": 5000,
+  "fee_amount": 125,
+  "net_amount": 4875,
+  "fee_reference": "STANDARD_FEE",
+  "currency_code": "XOF",
+  "payment_method_code": "MOBILE_MONEY",
+  "provider_code": "WAVE",
+  "provider_transaction_id": "prov_trx_12345",
+  "transaction_type": "payment",
+  "product_id": null,
+  "subscription_id": null,
+  "status": "completed",
+  "description": "Payment for Order #5678",
+  "created_at": "2025-04-05T10:30:00.000Z",
+  "updated_at": "2025-04-05T10:30:05.000Z",
+  "metadata": { "source": "api" },
+  "environment": "test"
+}
+```
+
+## Subscription plan object
+
+Represents a reusable subscription plan definition. Returned by subscription plan endpoints (`` `GET /merchants/{m_id}/subscriptions` ``, `` `POST /merchants/{m_id}/subscriptions` ``, etc.).
+
+| Property                | Type   | Description                                                                                 |
+| ----------------------- | ------ | ------------------------------------------------------------------------------------------- |
+| `` `plan_id` ``               | `` `string` `` | Unique identifier for the subscription plan (UUID).                                         |
+| `` `merchant_id` ``           | `` `string` `` | Identifier for the merchant this plan belongs to.                                           |
+| `` `organization_id` ``       | `` `string` `` | Identifier for the organization this plan belongs to.                                     |
+| `` `name` ``                  | `` `string` `` | Name of the subscription plan.                                                              |
+| `` `description` ``           | `` `string` `` | Description of the plan (nullable).                                                         |
+| `` `amount` ``                | `` `number` `` | Amount to be charged per billing cycle, in the smallest currency unit.                      |
+| `` `currency_code` ``         | `` `string` `` | Three-letter ISO currency code for the amount (e.g., `` `"XOF"` ``).                              |
+| `` `billing_frequency` ``     | `` `string` `` | How often the subscription renews (e.g., `` `monthly` ``, `` `yearly` ``, `` `weekly` ``).                       |
+| `` `failed_payment_action` `` | `` `string` `` | Action to take on failed recurring payments (e.g., `` `cancel` ``, `` `pause` ``) (nullable).           |
+| `` `charge_day` ``            | `` `number` `` | Specific day for charging (day of month/week, depending on frequency) (nullable).           |
+| `` `metadata` ``              | `` `object` `` | Key-value pairs for storing additional information about the plan (nullable).               |
+| `` `is_active` ``             | `` `boolean` ``| Whether the plan can be used to create new customer subscriptions.                            |
+| `` `first_payment_type` ``    | `` `string` `` | Type of the first payment (e.g., `` `initial` ``, `` `prorated` ``) (nullable).                          |
+| `` `created_at` ``            | `` `string` `` | Timestamp (ISO 8601) indicating when the plan was created.                                  |
+| `` `updated_at` ``            | `` `string` `` | Timestamp (ISO 8601) indicating when the plan was last updated.                            |
+
+**Example:**
+
+```json filename="Example Plan object"
+{
+  "plan_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "merchant_id": "904d003c-3736-41d4-90a5-9de74d404fd7",
+  "organization_id": "org_abc123...",
+  "name": "Pro Monthly Plan",
+  "description": "Access to all pro features, billed monthly.",
+  "amount": 1500000,
+  "currency_code": "XOF",
+  "billing_frequency": "monthly",
+  "failed_payment_action": null,
+  "charge_day": null,
+  "metadata": {
+    "internal_code": "PRO_M"
+  },
+  "is_active": true,
+  "first_payment_type": "initial",
+  "created_at": "2023-10-27T10:00:00Z",
+  "updated_at": "2023-10-27T10:00:00Z"
+}
+```
+
+## Customer object
+
+Represents a customer profile associated with a merchant account. Returned by customer endpoints (`` `GET /customers/{id}` ``, `` `POST /customers` ``, etc.).
+
+| Property          | Type    | Description                                                                       |
+| ----------------- | ------- | --------------------------------------------------------------------------------- |
+| `` `customer_id` ``     | `` `string` ``  | Unique identifier for the customer.                                               |
+| `` `merchant_id` ``     | `` `string` ``  | Identifier for the merchant this customer belongs to.                           |
+| `` `organization_id` `` | `` `string` ``  | Identifier for the organization this customer belongs to.                       |
+| `` `name` ``            | `` `string` ``  | Customer's full name.                                                              |
+| `` `email` ``           | `` `string` ``  | Customer's email address (nullable).                                              |
+| `` `phone_number` ``    | `` `string` ``  | Customer's phone number (nullable).                                               |
+| `` `whatsapp_number` `` | `` `string` ``  | Customer's WhatsApp number (nullable).                                            |
+| `` `country` ``         | `` `string` ``  | Customer's country (nullable).                                                    |
+| `` `city` ``            | `` `string` ``  | Customer's city (nullable).                                                       |
+| `` `address` ``         | `` `string` ``  | Customer's street address (nullable).                                             |
+| `` `postal_code` ``     | `` `string` ``  | Customer's postal code (nullable).                                                |
+| `` `is_business` ``     | `` `boolean` `` | Indicates if the customer represents a business.                                  |
+| `` `metadata` ``        | `` `object` ``  | Key-value pairs for storing additional information about the customer (nullable). |
+| `` `created_at` ``      | `` `string` ``  | Timestamp (ISO 8601) indicating when the customer was created.                   |
+| `` `updated_at` ``      | `` `string` ``  | Timestamp (ISO 8601) indicating when the customer was last updated.              |
+
+**Example:**
+
+```json filename="Example Customer object"
+{
+  "customer_id": "b78de3c9-7f76-4f43-9c5d-19d9f5c7c985",
+  "merchant_id": "904d003c-3736-41d4-90a5-9de74d404fd7",
+  "organization_id": "0979ec77-9fb1-4c9a-8c55-d7fb6c182c9c",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone_number": "+221771234567",
+  "whatsapp_number": null,
+  "country": "Senegal",
+  "city": "Dakar",
+  "address": null,
+  "postal_code": null,
+  "is_business": false,
+  "metadata": null,
+  "created_at": "2025-04-04T14:21:49.955Z",
+  "updated_at": "2025-04-04T14:21:49.955Z"
+}
+```
+
+## Product object
+
+Represents a product or service that can be purchased. Returned by product endpoints (`` `GET /products` ``, `` `POST /products` ``, etc.).
+
+| Property                | Type           | Description                                                               |
+| ----------------------- | -------------- | ------------------------------------------------------------------------- |
+| `` `product_id` ``            | `` `string` ``         | Unique identifier for the product (UUID).                                 |
+| `` `merchant_id` ``           | `` `string` ``         | Identifier for the merchant this product belongs to.                      |
+| `` `organization_id` ``       | `` `string` ``         | Identifier for the organization this product belongs to.                  |
+| `` `name` ``                  | `` `string` ``         | Name of the product.                                                      |
+| `` `description` ``           | `` `string` ``         | Description of the product (nullable).                                    |
+| `` `price` ``                 | `` `number` ``         | Price of the product (in the specified currency).                         |
+| `` `currency_code` ``         | `` `string` ``         | Currency code for the price (e.g., `` `"XOF"` ``, `` `"USD"` ``).                   |
+| `` `image_url` ``             | `` `string` ``         | URL for the product image (nullable).                                     |
+| `` `is_active` ``             | `` `boolean` ``        | Whether the product is currently active and can be purchased.             |
+| `` `display_on_storefront` `` | `` `boolean` ``        | Whether the product should be displayed on a merchant storefront (if applicable). |
+| `` `fee_type_ids` ``        | `` `array (string)` `` | Array of UUIDs for associated organization fee types (may not be present). |
+| `` `created_at` ``            | `` `string` ``         | Timestamp (ISO 8601) indicating when the product was created.            |
+| `` `updated_at` ``            | `` `string` ``         | Timestamp (ISO 8601) indicating when the product was last updated.       |
+
+**Example:**
+
+```json filename="Example Product object"
+{
+  "product_id": "uuid-generated-for-product",
+  "merchant_id": "uuid-of-authenticated-merchant",
+  "organization_id": "uuid-of-merchants-org",
+  "name": "Premium Widget",
+  "description": "An optional description of the widget.",
+  "price": 19.99,
+  "currency_code": "XOF",
+  "image_url": "https://example.com/image.jpg",
+  "is_active": true,
+  "display_on_storefront": true,
+  "created_at": "2023-10-27T10:00:00Z",
+  "updated_at": "2023-10-27T10:00:00Z"
+}
+```
+
+## Provider object
+
+Represents an available payment provider and its connection status for your account. Returned by the `` `GET /providers` `` endpoint.
+
+| Property          | Type           | Description                                                     |
+| ----------------- | -------------- | --------------------------------------------------------------- |
+| `` `code` ``            | `` `string` ``         | Unique identifier for the payment provider (e.g., `` `"ORANGE"` ``). |
+| `` `name` ``            | `` `string` ``         | Display name of the payment provider (e.g., `` `"Orange Money"` ``).  |
+| `` `description` ``     | `` `string` ``         | Brief description of the payment provider.                      |
+| `` `payment_methods` `` | `` `array (string)` `` | List of payment method types supported by this provider (e.g., `` `["mobile_money"]` ``). |
+| `` `is_connected` ``    | `` `boolean` ``        | Indicates whether this provider is configured and active for your merchant account. |
+
+**Example:**
+
+```json filename="Example Provider object"
+{
+  "code": "WAVE",
+  "name": "Wave",
+  "description": "Pay with Wave mobile wallet",
+  "payment_methods": ["mobile_money"],
+  "is_connected": false
+}
+```
+
+## Webhook object
+
+Represents a configured webhook endpoint for receiving event notifications. Returned by webhook endpoints (`GET /webhooks`, `POST /webhooks`, etc.).
+
+| Property      | Type           | Description                                                                                              |
+| ------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
+| `` `webhook_id` `` | `` `string` ``         | Unique identifier for the webhook endpoint (UUID).                                                       |
+| `` `merchant_id` `` | `` `string` ``         | Identifier for the merchant account this webhook belongs to.                                               |
+| `` `organization_id` `` | `` `string` ``         | Identifier for the organization this webhook belongs to.                                                   |
+| `` `url` ``        | `` `string` ``         | The HTTPS URL where event notifications will be sent.                                                    |
+| `` `description` `` | `` `string` ``         | Optional description for the webhook endpoint.                                                           |
+| `` `event_types` `` | `` `array (string)` `` | List of event types this endpoint is subscribed to (e.g., `` `["transaction.succeeded"]` ``). |
+| `` `is_active` ``   | `` `boolean` ``        | Whether the webhook endpoint is currently active and receiving events.                                   |
+| `` `secret` ``      | `` `string` ``         | The secret key used to sign webhook events (used to verify the sender). Returned only on creation. |
+| `` `created_at` ``  | `` `string` ``         | Timestamp (ISO 8601) indicating when the webhook was created.                                            |
+| `` `updated_at` ``  | `` `string` ``         | Timestamp (ISO 8601) indicating when the webhook was last updated.                                       |
+
+**Example (on creation):**
+
+```json
+{
+  "webhook_id": "wh_abc123...",
+  "merchant_id": "904d003c-3736-41d4-90a5-9de74d404fd7",
+  "organization_id": "org_abc123...",
+  "url": "https://your-server.com/webhook-handler",
+  "description": "Primary webhook for payment events",
+  "event_types": [
+    "transaction.succeeded",
+    "transaction.failed"
+  ],
+  "is_active": true,
+  "secret": "whsec_...", // Returned only on creation
+  "created_at": "2023-10-27T12:00:00Z",
+  "updated_at": "2023-10-27T12:00:00Z"
+}
+```
+
+**Example (on retrieval):**
+
+```json
+{
+  "webhook_id": "wh_abc123...",
+  "merchant_id": "904d003c-3736-41d4-90a5-9de74d404fd7",
+  "organization_id": "org_abc123...",
+  "url": "https://your-server.com/webhook-handler",
+  "description": "Primary webhook for payment events",
+  "event_types": [
+    "transaction.succeeded",
+    "transaction.failed"
+  ],
+  "is_active": true,
+  // "secret" is not returned on retrieval
+  "created_at": "2023-10-27T12:00:00Z",
+  "updated_at": "2023-10-27T12:15:00Z"
+}
+```
+
+## Error object
+
+Represents the structure returned in the response body when an API request fails (returns a `4xx` or `5xx` status code).
+
+| Property    | Type             | Description                                                                 |
+| ----------- | ---------------- | --------------------------------------------------------------------------- |
+| `error`     | object           | Container for the error details.                                            |
+| `message`   | string           | A brief, human-readable summary of the error.                               |
+| `details`   | string or object | Optional. Provides more specific context or structured data about the error. |
+
+See the [Errors](/docs/reference/reference/errors) guide for more details on status codes and common error messages.
+
+**Example:**
+
+```json
+{
+  "error": {
+    "message": "Invalid API key",
+    "details": "The provided API key is invalid or does not exist"
+  }
+}
+``` 

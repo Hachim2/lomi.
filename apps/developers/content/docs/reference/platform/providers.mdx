@@ -1,0 +1,151 @@
+---
+title: "Providers"
+description: "The Providers API allows merchants to retrieve information about available payment providers connected to their account. This information can be used to determine which payment methods to offer to customers."
+---
+
+## Base URL
+
+```http filename="Terminal"
+https://api.lomi.africa/v1
+```
+
+## Authentication
+
+All API requests require authentication using an API key. Provide your API key in the `` `X-API-Key` `` request header. See [Authentication](/docs/reference/setup/authentication) for more details.
+
+```http filename="Terminal"
+X-API-Key: your_api_key
+```
+
+## Endpoints
+
+### List payment providers
+
+Retrieves a list of all available payment providers and indicates whether they are connected (active) for the authenticated merchant.
+
+**Endpoint:** `` `GET /providers` ``
+
+**Query parameters:** None
+
+**Example response:**
+
+```json filename="GET /providers response"
+{
+  "data": [
+    {
+      "code": "ORANGE",
+      "name": "Orange Money",
+      "description": "Pay with Orange Money mobile wallet",
+      "payment_methods": ["mobile_money"],
+      "is_connected": true
+    },
+    {
+      "code": "WAVE",
+      "name": "Wave",
+      "description": "Pay with Wave mobile wallet",
+      "payment_methods": ["mobile_money"],
+      "is_connected": false
+    },
+    {
+      "code": "NOWPAYMENTS",
+      "name": "NOWPayments",
+      "description": "Pay with cryptocurrency",
+      "payment_methods": ["crypto"],
+      "is_connected": false
+    }
+    // Additional providers...
+  ]
+}
+```
+
+**Response properties:**
+
+| Property          | Type    | Description                                                     |
+| ----------------- | ------- | --------------------------------------------------------------- |
+| `` `code` ``            | `` `string` ``  | Unique identifier for the payment provider                      |
+| `` `name` ``            | `` `string` ``  | Display name of the payment provider                            |
+| `` `description` ``     | `` `string` ``  | Brief description of the payment provider                       |
+| `` `payment_methods` `` | `` `array` ``   | List of payment method types supported by this provider         |
+| `` `is_connected` ``    | `` `boolean` `` | Whether this provider is connected to your merchant account |
+
+**Possible error responses:**
+
+| Status Code | Error Message                     | Description                                  |
+| ----------- | --------------------------------- | -------------------------------------------- |
+| `` `401` ``         | `` `Authentication required` ``         | Missing or invalid API key                   |
+| `` `500` ``         | `` `Failed to retrieve providers` ``    | Internal server error retrieving providers |
+
+## Error handling
+
+Error responses follow a consistent format. See the [Errors](/docs/reference/reference/errors) guide for more details.
+
+```json filename="Example error response"
+{
+  "error": {
+    "message": "Error message description",
+    "details": "Additional details or structured error data"
+  }
+}
+```
+
+## Rate limits
+
+API requests are subject to rate limits based on your API key type:
+
+-   **Live API keys:** 60 requests per minute, 10,000 requests per day
+-   **Test API keys:** 120 requests per minute, 20,000 requests per day
+
+Exceeding these limits will result in a `` `429 Too Many Requests` `` error.
+
+## Implementation notes
+
+-   Use the `` `is_connected` `` property to determine which providers to display as payment options to your customers. Only connected providers can be used to process payments.
+-   The list of available providers (`` `code` ``) may change over time as new integrations are added.
+-   Provider availability might depend on merchant configuration and supported regions.
+-   Use the provider `` `code` `` (e.g., `` `"ORANGE"` ``, `` `"WAVE"` ``) when specifying allowed providers in other API calls like creating Checkout Sessions.
+
+## Testing
+
+You can test this endpoint using `` `curl` `` or any HTTP client. Remember to replace placeholder values like the base URL and API key.
+
+### Retrieve all available payment providers
+
+```bash filename="Terminal"
+curl -X GET "https://api.lomi.africa/v1/providers" \
+  -H "X-API-Key: your_api_key"
+```
+
+### Test with an invalid API key
+
+```bash filename="Terminal"
+curl -X GET "https://api.lomi.africa/v1/providers" \
+  -H "X-API-Key: invalid_api_key"
+```
+
+Expected error response:
+
+```json filename="Invalid API key error"
+{
+  "error": {
+    "message": "Invalid API key",
+    "details": "The provided API key is invalid or does not exist"
+  }
+}
+```
+
+### Test with a missing API key header
+
+```bash filename="Terminal"
+curl -X GET "https://api.lomi.africa/v1/providers"
+```
+
+Expected error response:
+
+```json filename="Missing API key error"
+{
+  "error": {
+    "message": "Missing API key",
+    "details": "API key is required for authentication"
+  }
+}
+``` 

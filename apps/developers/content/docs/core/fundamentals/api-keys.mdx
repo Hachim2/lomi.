@@ -1,0 +1,96 @@
+---
+title: "Environment variables"
+description: "Securely managing your API keys and environment variables is essential for interacting with the lomi. API. This guide covers the basics you need to get started."
+---
+
+## API keys: Test v. Live
+
+lomi. provides two types of API keys, identifiable by their prefixes:
+
+*   **Test Keys (`lomi_sk_test_...`):** Use these exclusively for development and testing purposes in the sandbox environment. They allow you to simulate API calls without affecting live data or processing real payments.
+*   **Live Keys (`lomi_sk_live_...`):** Use these only in your production environment to process real customer transactions. Live keys require your account to be fully verified and activated.
+
+**Never** hardcode your API keys directly in your source code. 
+**Never** commit them to version control systems like Git.
+
+## Managing environment variables
+
+The recommended way to handle your API keys and other configuration details is through environment variables.
+
+**Required variables:**
+
+*   `LOMI_API_KEY`: Your lomi. API secret key (either Test or Live).
+    ```bash filename="Terminal"
+    export LOMI_API_KEY=lomi_sk_test_... # For testing
+    # or
+    export LOMI_API_KEY=lomi_sk_live_... # For production
+    ```
+*   `LOMI_WEBHOOK_SECRET`: Your unique webhook signing secret, used to verify incoming webhook requests. You obtain this from the lomi. Dashboard.
+    ```bash filename="Terminal"
+    export LOMI_WEBHOOK_SECRET=whsec_...
+    ```
+
+**Optional variables:
+
+*   `LOMI_API_URL`: Specifies the API base URL. If not set, the SDK might default based on the key type, but explicitly setting it is safer.
+    ```bash filename="Terminal"
+    # Sandbox for testing
+    export LOMI_API_URL=https://sandbox.api.lomi.africa/v1 
+    # Production for live transactions
+    export LOMI_API_URL=https://api.lomi.africa/v1 
+    ```
+*   `LOMI_TIMEOUT`: API request timeout in milliseconds (e.g., `30000` for 30 seconds).
+
+## Using variables in your Code
+
+### Node.js SDK Initialization
+
+Access your environment variables when initializing the SDK:
+
+```typescript filename="Node.js SDK initialization"
+import { LomiSDK } from 'lomi.cli';
+
+const lomi = new LomiSDK({
+  apiKey: process.env.LOMI_API_KEY,
+  baseUrl: process.env.LOMI_API_URL, // Explicitly set the base URL
+  timeout: process.env.LOMI_TIMEOUT ? parseInt(process.env.LOMI_TIMEOUT) : undefined
+});
+
+// Now you can use the 'lomi' instance to make API calls
+// e.g., await lomi.merchants.get('your_merchant_id');
+```
+
+### Webhook signature verification
+
+Use your webhook secret to verify the authenticity of incoming webhooks:
+
+```typescript filename="Webhook signature verification (Express)"
+// Inside your webhook handler (e.g., using Express)
+// req.rawBody contains the raw request body buffer
+// req.headers['x-lomi-signature'] contains the signature header
+
+try {
+  const isValid = lomi.webhooks.verifySignature(
+    req.rawBody, 
+    req.headers['x-lomi-signature'] as string,
+    process.env.LOMI_WEBHOOK_SECRET
+  );
+
+  if (isValid) {
+    // Process the verified webhook event (req.body)
+  } else {
+    // Signature is invalid, reject the request
+    res.status(400).send('Invalid signature.');
+  }
+} catch (error) {
+  console.error('Webhook verification error:', error);
+  res.status(500).send('Webhook verification failed.');
+}
+```
+
+## Best practices
+
+*   **Secure storage:** Use environment variables or a dedicated secrets management service. Never commit keys to Git.
+*   **Access control:** Limit who can access API keys. Use different keys for different applications if necessary.
+*   **Environment separation:** Strictly use Test keys for development/testing and Live keys for production.
+*   **Rotation:** Consider rotating your API keys periodically for enhanced security (available in the Dashboard).

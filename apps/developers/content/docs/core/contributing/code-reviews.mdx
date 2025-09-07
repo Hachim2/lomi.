@@ -1,0 +1,198 @@
+---
+title: "Code reviews"
+description: "Our code review process ensures code quality, knowledge sharing, and maintainability."
+---
+
+## Pull request guidelines
+
+### Title format
+```bash filename="PR Title Format"
+# Format
+<type>(<scope>): <description>
+
+# Examples
+feat(payments): implement Wave payment provider
+fix(webhooks): handle timeout errors
+docs(api): update authentication guide
+```
+
+### Description template
+```markdown filename="PR Description Template"
+## Changes
+- Added Wave payment provider integration
+- Implemented webhook signature verification
+- Updated API documentation
+
+## Testing
+- Unit tests added for payment processing
+- Integration tests for webhook handling
+- Manual testing with test credentials
+
+## Screenshots
+[If applicable]
+
+## Related issues
+Closes #123
+```
+
+## Review process
+
+### Self review
+```bash filename="Terminal - Self Review Checks"
+# Run tests
+npm test
+
+# Check linting
+npm run lint
+
+# Build documentation
+npm run docs:build
+```
+
+### Code review
+- Request reviews from relevant team members
+- Address feedback promptly
+- Re-request review after changes
+
+### CI checks
+- All tests must pass
+- Code coverage requirements met
+- No security vulnerabilities
+- Documentation updated
+
+## Review checklist
+
+### Code quality
+- Follows coding standards
+- No duplicate code
+- Proper error handling
+- Efficient implementation
+
+### Testing
+- Unit tests added/updated
+- Integration tests if needed
+- Edge cases covered
+- Test coverage maintained
+
+### Security
+- Input validation
+- Authentication/Authorization
+- Sensitive data handling
+- Security best practices
+
+### Documentation
+- Code comments
+- API documentation
+- README updates
+- Changelog entry
+
+## Best practices
+
+### As a submitter
+```typescript filename="Submitter Example (Good vs Bad)"
+// DO: Small, focused changes
+function validatePayment(amount: number): boolean {
+  return amount > 0 && amount <= 1000000;
+}
+
+// DON'T: Multiple unrelated changes
+/*
+function validateAndProcessPayment() {
+  // Mixed concerns
+}
+*/
+```
+
+### As a reviewer
+```typescript filename="Reviewer Example (Good vs Bad Feedback)"
+// Good feedback
+// Consider using a type guard for better type safety
+function isValidAmount(amount: unknown): amount is number {
+  return typeof amount === 'number' && amount > 0;
+}
+
+// Unhelpful feedback
+// // This is wrong
+```
+
+### Code examples
+```typescript filename="Code Example (Before/After)"
+// Before
+/*
+function process(data) {
+  if (data) {
+    return data.value;
+  }
+}
+*/
+
+// After
+function process(data: InputData): OutputData {
+  if (!data) {
+    throw new Error('Data is required');
+  }
+  return data.value;
+}
+```
+
+## Review comments
+
+### Constructive feedback
+```typescript filename="Constructive Feedback Example"
+// Instead of:
+// // This is messy
+
+// Better:
+// Consider extracting this logic into a separate function
+// for better reusability and testing:
+function validateWebhookSignature(
+  payload: string,
+  signature: string
+): boolean {
+  // Implementation
+}
+```
+
+### Suggestions
+```typescript filename="Suggestion Example"
+// Instead of:
+// // Use better names
+
+// Better:
+// Consider more descriptive names:
+// - `processPayment` -> `validateAndProcessPayment`
+// - `data` -> `paymentData`
+```
+
+## After review
+
+### Addressing feedback
+```bash filename="Terminal - Addressing Feedback"
+# Update branch
+git fetch origin
+git rebase origin/develop
+
+# Make changes
+git add .
+git commit -m "fix: address review feedback"
+
+# Force push if needed
+git push --force-with-lease
+```
+
+### Merging
+```bash filename="Terminal - Merging Strategies"
+# Squash and merge
+git checkout develop
+git merge --squash feature/payment-method
+
+# Or rebase and merge
+git checkout develop
+git rebase feature/payment-method
+```
+
+## Next steps
+
+- [Best practices](/docs/core/contributing/best-practices)
+- [Branching strategy](/docs/core/contributing/branching-strategy)
+- [Best practices](/docs/core/contributing/best-practices) 

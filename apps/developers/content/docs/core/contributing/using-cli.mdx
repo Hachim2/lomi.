@@ -1,0 +1,64 @@
+---
+title: "Using git"
+description: "When collaborating on your lomi. integration using Git, you can use the command-line interface (CLI) to perform various Git operations."
+---
+
+## Initializing a Git repository
+
+To get started, initialize a Git repository in the directory where your integration code and configuration files are stored:
+
+```bash filename="Terminal"
+git init
+```
+
+## Staging and committing changes
+
+After making changes to your integration code or configurations, stage the changes using the `git add` command:
+
+```bash filename="Terminal"
+git add .
+```
+
+Then, commit the changes with a descriptive message:
+
+```bash filename="Terminal"
+git commit -m "Update payment provider configuration"
+```
+
+## Pushing changes to a remote repository
+
+To collaborate with your team, push your changes to a remote repository:
+
+```bash filename="Terminal"
+git push origin develop
+```
+
+Replace `main` with the appropriate branch name if you're using a different branching strategy.
+
+## Pulling changes from a remote repository
+
+To get the latest changes made by your team members, pull the changes from the remote repository:
+
+```bash filename="Terminal"
+git pull origin develop
+```
+
+Again, replace `main` with the appropriate branch name if necessary.
+
+## Resolving merge conflicts
+
+If you encounter merge conflicts when pulling changes, you'll need to resolve them manually. Open the conflicting files, make the necessary changes, and then stage and commit the resolved files:
+
+```bash filename="Terminal"
+git add resolved_file.js
+git commit -m "Resolve merge conflicts"
+```
+
+## Best practices
+
+- Commit frequently with descriptive messages
+- Use branches for developing new features or configurations
+- Regularly pull changes from the remote repository to stay up-to-date
+- Resolve merge conflicts carefully and communicate with your team
+
+By using the Git CLI effectively and following best practices, you can collaborate smoothly with your team on your lomi. integration.

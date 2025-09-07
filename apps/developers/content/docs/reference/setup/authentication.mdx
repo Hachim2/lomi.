@@ -1,0 +1,65 @@
+---
+title: "Authentification"
+description: "All lomi. requests are authentified using API keys. Any request that doesn't include a valid API key will return an authentication error."
+---
+
+There are two types of API keys corresponding to lomi.'s two environments: Test and Live.
+
+## API keys
+
+All API requests must be made over HTTPS. Requests made over plain HTTP will fail. API requests without authentication will also fail.
+
+You must include an API key in the `` `X-API-Key` `` header for every request.
+
+```http filename="API request header"
+GET /v1/providers HTTP/1.1
+Host: api.lomi.africa
+X-API-Key: your_api_key
+```
+
+Replace `your_api_key` with your specific secret API key.
+
+## Test vs. Live environments
+
+lomi. provides two distinct environments to separate development and testing from production operations.
+
+### Test environment
+
+Use the test environment to develop and test your integration without processing real transactions or affecting live data. It mirrors the functionality of the live environment.
+
+-   **API Keys:** Test API keys start with `` `lomi_sk_test_` ``.
+-   **Base URL:** `` `https://sandbox.api.lomi.africa/v1` ``
+-   **Rate Limits:** 120 requests per minute / 20,000 requests per day.
+-   **Data:** Uses simulated data. Responses may include environment flags like `` `"environment": "test"` ``.
+
+### Live environment
+
+Use the live environment for production operations involving real transactions.
+
+-   **API Keys:** Live API keys start with `` `lomi_sk_live_` ``.
+-   **Base URL:** `` `https://api.lomi.africa/v1` ``
+-   **Rate Limits:** 60 requests per minute / 10,000 requests per day.
+-   **Data:** Processes real data. Responses may include environment flags like `` `"environment": "live"` ``.
+
+To switch between environments, simply use the appropriate API key and base URL.
+
+## Obtaining API keys
+
+You can obtain your API keys after signing up and completing verification:
+
+1.  Log in to the [dashboard](https://lomi.africa/portal).
+2.  Navigate to the **Developers** or **API Settings** section.
+3.  Generate separate API keys for the **Test** and **Live** environments.
+
+## Key management and security
+
+Treat your API keys as sensitive credentials. You can manage them (generate, revoke, view usage) in the merchant dashboard.
+
+Best practices:
+
+-   **Keep keys confidential:** Do not share your secret keys. Store them securely (e.g., environment variables, secrets management service).
+-   **Never expose keys client-side:** Do not embed API keys in frontend code.
+-   **Avoid version control:** Do not commit keys to your codebase.
+-   **Use test keys for development:** Only use live keys for production applications.
+-   **Rotate keys:** Consider rotating keys periodically or if you suspect a compromise.
+-   **Limit access:** Restrict access to API keys within your organization. 

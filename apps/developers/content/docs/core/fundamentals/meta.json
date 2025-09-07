@@ -1,0 +1,9 @@
+{
+  "pages": [
+    "create-merchant-account",
+    "setup-payment-methods",
+    "api-keys",
+    "setup-webhooks",
+    "transactions"
+  ]
+}

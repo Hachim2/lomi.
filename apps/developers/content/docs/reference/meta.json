@@ -1,0 +1,15 @@
+{
+  "title": "API Reference",
+  "description": "Complete reference to building with lomi. API.",
+  "root": true,
+  "icon": "Code",
+  "pages": [
+    "---Basics---",
+    "setup",
+    "payments",
+    "---Management---",
+    "platform",
+    "reference",
+    "changelog"
+  ]
+}

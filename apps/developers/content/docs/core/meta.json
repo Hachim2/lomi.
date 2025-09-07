@@ -1,0 +1,20 @@
+{
+  "title": "First steps",
+  "description": "Developers use lomi. to reliably accept payments in West Africa.",
+  "root": true,
+  "icon": "Code",
+  "pages": [
+    "---Basics---",
+    "introduction",
+    "fundamentals",
+    "---Implementation---",
+    "reference",
+    "advanced-guides",
+    "lomi-cli",
+    "---Community---",
+    "merchant-of-record",
+    "freedom",
+    "contributing",
+    "support"
+  ]
+}

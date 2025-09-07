@@ -1,0 +1,4 @@
+# SDK build files
+dist/
+spec.yaml
+node_modules/

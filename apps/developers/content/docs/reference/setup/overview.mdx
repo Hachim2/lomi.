@@ -1,0 +1,44 @@
+---
+title: "Overview"
+description: "Welcome to the lomi.'s REST API documentation. This API allows you to integrate lomi.'s payment capabilities directly into your applications."
+---
+
+You can use the API to manage resources like payment providers and configure webhooks to receive real-time event notifications.
+
+## Environments and authentication
+
+lomi. provides separate **Test** and **Live** environments, each with its own base URL and API keys. All API requests must be authenticated using your secret API key passed in the `` `X-API-Key` `` header.
+
+For full details on environments, base URLs, obtaining API keys, and security best practices, see the [Authentication](/docs/reference/setup/authentication) guide.
+
+## Requests and responses
+
+All API requests should be made over HTTPS to the appropriate base URL. Request bodies (for `` `POST` ``, `` `PATCH` `` methods) should be sent as JSON.
+
+Responses are returned in JSON format. Successful requests return `` `2xx` `` status codes. Failed requests return `` `4xx` `` or `` `5xx` `` status codes with a standardized error object in the response body.
+
+Learn more about the structure of success and error responses in the [Errors](/docs/reference/reference/errors) guide.
+
+## API resources
+
+This core reference section covers the following API resources:
+
+-   **[Authentication](/docs/reference/setup/authentication):** How to authenticate your API requests.
+-   **[Errors](/docs/reference/reference/errors):** Understanding API error responses.
+-   **[Data Models](/docs/reference/reference/data-models):** Structure of key API objects.
+-   **[Merchants](/docs/reference/platform/merchants):** Managing merchant account details and metrics.
+-   **[Customers](/docs/reference/platform/customers):** Creating and managing customer profiles.
+-   **[Products](/docs/reference/payments/products):** Managing product definitions.
+-   **[Transactions](/docs/reference/payments/transactions):** Retrieving payment transaction details.
+-   **[Subscription Plans](/docs/reference/payments/subscriptions):** Managing reusable subscription plan definitions.
+-   **[Customer Subscriptions](/docs/reference/platform/customer-subscriptions):** Managing individual customer subscriptions.
+-   **[Checkout Sessions](/docs/reference/payments/checkout-sessions):** Creating sessions for online checkouts.
+-   **[Payment Links](/docs/reference/payments/payment-links):** Creating shareable payment pages.
+-   **[Providers](/docs/reference/platform/providers):** Retrieving connected payment provider information.
+-   **[Webhooks](/docs/reference/payments/webhooks):** Managing webhook endpoints for event notifications.
+-   **[Refunds](/docs/reference/payments/refunds):** Retrieving refund details (Beta).
+-   **[Changelog](/docs/reference/changelog/changelog):** Notable API changes and updates.
+
+## Versioning
+
+The current API version is `` `v1` ``, included in the base URL path (`/v1/`). We strive to maintain backward compatibility for this version. Significant breaking changes would be introduced under a new version path. 
