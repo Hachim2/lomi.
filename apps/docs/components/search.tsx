@@ -35,25 +35,15 @@ const items = [
     value: undefined,
   },
   {
-    name: 'Framework',
-    description: 'Only results about lomi. payment stack',
-    value: 'ui',
-  },
-  {
     name: 'Core',
-    description: 'Only results about core features',
-    value: 'headless',
+    description: 'Fundamentals and core concepts',
+    value: 'core',
   },
   {
-    name: 'MDX',
-    description: 'Only results about lomi. documentation',
-    value: 'mdx',
-  },
-  {
-    name: 'CLI',
-    description: 'Only results about lomi. CLI',
-    value: 'cli',
-  },
+    name: 'API Reference',
+    description: 'Complete API documentation',
+    value: 'reference',
+  }
 ];
 
 export default function CustomSearchDialog(props: SharedProps) {
