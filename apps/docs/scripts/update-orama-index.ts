@@ -16,7 +16,7 @@ export async function updateSearchIndexes(): Promise<void> {
   const manager = new CloudManager({ api_key: apiKey });
 
   await sync(manager, {
-    index: 'twr98yz9itca86121ukrqber',
+    index: 'bqqj4wrcro91peuj4g4c0ztl',
     documents: records,
   });
 
