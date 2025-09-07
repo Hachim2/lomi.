@@ -149,7 +149,7 @@ app.get("/", (_req: Request, res: Response) => {
   res.json({
     name: "lomi. API",
     version: "1.0.1",
-    documentation: "https://developers.lomi.africa",
+    documentation: "https://docs.lomi.africa",
     endpoints: {
       health: "/health",
       api: "/v1",

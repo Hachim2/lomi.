@@ -20,11 +20,11 @@ To start using lomi. for your payment processing needs, follow these steps:
 4. Test your integration in our sandbox environment or Postman.
 5. Go live! and start processing real transactions.
 
-For detailed instructions and guides, please refer to our [documentation](https://developers.lomi.africa).
+For detailed instructions and guides, please refer to our [documentation](https://docs.lomi.africa).
 
 ## Contributing
 
-We welcome contributions to improve lomi. and its documentation. If you find any issues or have suggestions, please open an issue or submit a pull request on our [GitHub repository](https://github.com/lomiafrica/developers.lomi.africa).
+We welcome contributions to improve lomi. and its documentation. If you find any issues or have suggestions, please open an issue or submit a pull request on our [GitHub repository](https://github.com/lomiafrica/lomi./).
 
 For detailed contribution guidelines, please see the main [CONTRIBUTING.md](https://github.com/lomiafrica/lomi./blob/master/CONTRIBUTING.md) in the monorepo.
 

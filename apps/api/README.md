@@ -35,6 +35,6 @@ For local development:
 
 ## Support
 
-- [Documentation](https://developers.lomi.africa)
+- [Documentation](https://docs.lomi.africa)
 - [API Reference](https://docs.lomi.africa/api)
 - [Support Email](mailto:hello@lomi.africa)

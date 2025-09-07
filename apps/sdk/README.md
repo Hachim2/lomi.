@@ -53,7 +53,7 @@ async function createNewCustomer() {
 createNewCustomer();
 ```
 
-Refer to the `src/generated/services` directory and the [lomi. API Documentation](https://developers.lomi.africa) for details on available services and methods.
+Refer to the `src/generated/services` directory and the [lomi. API Documentation](https://docs.lomi.africa) for details on available services and methods.
 
 ## Contributing
 

@@ -15,7 +15,7 @@
 
 <a href="https://lomi.africa">Website</a>
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-<a href="https://developers.lomi.africa">Docs</a>
+<a href="https://docs.lomi.africa">Docs</a>
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 <a href="https://docs.lomi.africa/reference/core/overview">API</a>
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
@@ -62,7 +62,7 @@ We are progressively open-sourcing the entire lomi. project:
 
 - **Currently Open Source**:
   - Merchant dashboard : **[apps/website](https://github.com/lomiafrica/website)**
-  - Documentation website: **[apps/developers](https://github.com/lomiafrica/developers.lomi.africa)**
+  - Documentation website: **[apps/developers](https://github.com/lomiafrica/lomi.)**
 
 - **Opening Soon**:
   - API service:  **[apps/api](https://github.com/lomiafrica/api.lomi.africa)**
@@ -181,7 +181,7 @@ bun run dev
 
 ## Documentation
 
-For comprehensive documentation, visit [developers.lomi.africa](https://developers.lomi.africa)
+For comprehensive documentation, visit [docs.lomi.africa](https://docs.lomi.africa)
 
 ## Use Cases
 
@@ -212,7 +212,7 @@ We welcome contributions to lomi. ! This document outlines how to submit changes
 
 ### Prerequisites
 - You're familiar with GitHub Issues and Pull Requests
-- You've read the [documentation](https://developers.lomi.africa)
+- You've read the [documentation](https://docs.lomi.africa)
 - You've already set up your local instance with `git clone https://github.com/lomiafrica/website` or via `bun install lomi.cli`
 
 ### Contribution process

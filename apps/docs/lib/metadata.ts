@@ -6,7 +6,7 @@ export function createMetadata(override: Metadata): Metadata {
     openGraph: {
       title: override.title ?? undefined,
       description: override.description ?? undefined,
-      url: 'https://developers.lomi.africa',
+      url: 'https://docs.lomi.africa',
       images: '/banner.webp',
       siteName: 'lomi. / docs',
       ...override.openGraph,
