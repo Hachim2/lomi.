@@ -1,7 +1,7 @@
 {
-  "buildCommand": "npm install autoprefixer && npm install && next build",
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm build",
   "devCommand": "next dev",
-  "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "regions": ["iad1"],
