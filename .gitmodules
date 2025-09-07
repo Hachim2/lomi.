@@ -1,6 +1,3 @@
-[submodule "apps/developers"]
-	path = apps/developers
-	url = https://github.com/lomiafrica/developers.lomi.africa
 [submodule "apps/shopify"]
 	path = apps/shopify
 	url = https://github.com/lomiafrica/shopify.lomi.africa
@@ -16,9 +13,6 @@
 [submodule "apps/website"]
 	path = apps/website
 	url = https://github.com/lomiafrica/website.git
-[submodule "apps/sdk"]
-	path = apps/sdk
-	url = https://github.com/lomiafrica/sdk.git
 [submodule "apps/events"]
 	path = apps/events
 	url = https://github.com/lomiafrica/events.git
