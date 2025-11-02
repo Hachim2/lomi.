@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="apps/docs/public/lomi_l.webp" width="200" height="200" alt="lomi. icon">
+	<img src="apps/docs/public/transparent_l.webp" width="200" height="200" alt="lomi. icon">
 	<h1 align="center"><b>lomi.</b></h1>
 <p align="center">
     Helping West African ventures sell online
@@ -35,9 +35,8 @@
   <a href="https://www.linkedin.com/company/lomiafri">
     <img src="https://img.shields.io/badge/LinkedIn-lomiafrica-blue?style=flat&logo=linkedin" alt="lomi. LinkedIn" />
   </a>
-    </a>
-    <a href="https://jumbo.lomi.africs">
-    <img src="https://img.shields.io/badge/Try_-Jumbo-gold.svg?style=flat" alt="PRs welcome!" />
+  <a href="https://join.slack.com/t/lomi-a/shared_invite/zt-3hezykfvo-eW1jX6IkXAqht875Y1wUOw">
+    <img src="https://img.shields.io/badge/Slack-lomi--a-4A154B?style=flat&logo=slack" alt="Join lomi. on Slack" />
   </a>
 </p>
 
@@ -54,7 +53,9 @@
 
 ## About lomi.
 
-lomi. is a unified payment orchestration platform that integrates multiple payment service providers and provides a seamless experience for merchants and their customers across West Africa and beyond. Our platform simplifies product and subscriptions billing while ensuring the highest levels of security, reliability, and compliance.
+lomi. is an open-source payment processing platform that integrates multiple payment service providers and provides a seamless experience for merchants and their customers across francophone West Africa and beyond. Our platform simplifies product, services, usage, and subscription billing while ensuring the highest levels of security, reliability, and compliance.
+
+Our platform is built on top of the BCEAO's PI-SPI infrastructure (La Plateforme d'Interopérabilité du Service de Paiement Instantané), enabling seamless interoperability between banks and mobile money providers across the UEMOA region (8 countries). This eliminates the need for multiple provider integrations and provides a seamless unified payment experience.
 
 ## Open-source Roadmap
 
@@ -69,8 +70,7 @@ We are progressively open-sourcing the entire lomi. project:
   - Boilerplate Next.js + Medusa: **[apps/store](https://github.com/lomiafrica/store.lomi.africa)**
   - Boilerplate Vite + Medusa: **[apps/commerce](https://github.com/lomiafrica/commerce.lomi.africa)**
   - Shopify extension: **[apps/shopify](https://github.com/lomiafrica/shopify.lomi.africa)**
-  - CLI tool: **[apps/cli](https://github.com/lomiafrica/cli.lomi.africa)** 
-  - Jumbo (Online IDE) **[apps/jumbo](https://github.com/lomiafrica/jumbo.lomi.africa)**
+  - CLI tool: **[apps/cli](https://github.com/lomiafrica/cli.lomi.africa)**
 
 Everything will be made available in the coming weeks and all separate repositories will be merged in the monorepo.
 
@@ -78,57 +78,57 @@ Everything will be made available in the coming weeks and all separate repositor
 
 <div align="left">
   <p>
-    <strong>🔌 Multiple Payment Providers</strong><br/>
-    Seamlessly integrate with various payment providers (Wave, MTN, Orange Money, Stripe) through a single API.
+    <strong>🌍 PI-SPI integration</strong><br/>
+    Built on BCEAO's official payment interoperability platform, enabling seamless Bank-to-Bank, Bank-to-Wallet, Wallet-to-Bank, and Wallet-to-Wallet transactions across 8 UEMOA countries through a single unified API.
   </p>
   
-  <!-- <p>
-    <strong>💱 Multi-Currency Support</strong><br/>
-    Process transactions in multiple currencies with automatic conversion and settlement.
-  </p>
-   -->
   <p>
-    <strong>🎨 Customizable Checkout</strong><br/>
+    <strong>🌐 International payments</strong><br/>
+    Accept international credit card payments and process transactions in multiple currencies.
+  </p>
+  
+  <p>
+    <strong>🎨 Customizable checkout</strong><br/>
     Create beautiful, branded checkout experiences that work across all devices.
   </p>
 
   <p>
-    <strong>🎨 Recurrent Payment Processing</strong><br/> 
+    <strong>🎨 Recurrent payment processing</strong><br/> 
     Automate subscription payments and recurring invoices with seamless support for mobile money (WhatsApp) and card payments via email.
   </p>
   
   <p>
-    <strong>👤 End-Customer Portal</strong><br/>
+    <strong>👤 End-customer portal</strong><br/>
     Provide customers with a self-service portal to manage their payment methods, view transaction history, request refunds, update subscription and account details.
   </p>
   
   <p>
-    <strong>📊 Comprehensive Analytics</strong><br/>
+    <strong>📊 Comprehensive analytics</strong><br/>
     Gain valuable insights into your customers payment behavior, conversion rates, and payment trends.
   </p>
   
   <p>
-    <strong>🛡️ Fraud Detection</strong><br/>
+    <strong>🛡️ Fraud detection</strong><br/>
     Advanced fraud prevention tools to protect your business and customers.
   </p>
   
   <p>
-    <strong>🔔 Webhook Management</strong><br/>
+    <strong>🔔 Webhook management</strong><br/>
     Real-time notifications for payment events to keep your systems in sync.
   </p>
   
   <p>
-    <strong>🔒 Secure Tokenization</strong><br/>
+    <strong>🔒 Secure tokenization</strong><br/>
     Safely store customers payment details for future transactions without handling sensitive data.
   </p>
   
   <p>
-    <strong>👥 Role-Based Access Control</strong><br/>
+    <strong>👥 Role-based access control</strong><br/>
     Manage team permissions with granular control over who can access what.
   </p>
 
   <p>
-  <strong>🏦 Instant Payouts for Merchants</strong><br/>
+  <strong>🏦 Instant payouts for merchants</strong><br/>
   Enable businesses to access their funds instantly via mobile money or bank withdrawals.
  </p>
 </div>
@@ -139,13 +139,14 @@ Everything will be made available in the coming weeks and all separate repositor
 - Node.js/Bun
 - Vite
 - Nextjs
-- Remix
 - React
+- React Native
 - Shadcn UI
 - Radix UI
+- Base UI
 - PostgreSQL via Supabase
 - Resend
-- Upstash
+- Upstash Redis
 - Anthropic
 - Huggingface
 - Infobip
@@ -153,40 +154,69 @@ Everything will be made available in the coming weeks and all separate repositor
 - Mixpanel
 - Sanity
 
-## Payment Service Providers (PSPs)
-- Wave
-- Orange
-- Crypto via NP
-- MTN (upcoming)
-- Stripe CNT (upcoming)
-- Airtel Money (upcoming)
-- More integration coming soon!
+## Payment Infrastructure
+
+### PI-SPI
+
+lomi. integrates with the **SPI**, the official Central Bank-backed payment interoperability platform. With lomi., you can accept payments across 8 UEMOA countries (Benin, Burkina Faso, Côte d'Ivoire, Guinea-Bissau, Mali, Niger, Senegal, Togo). Our platform enables Bank-to-Bank, Bank-to-Wallet, Wallet-to-Bank, and Wallet-to-Wallet transactions through our suite of APIs.
+
+The platform provides instant payment confirmation and settlement, allowing you to send payments using SHID, MCOD, or MBNO aliases without ever sharing account numbers. We offer native support for the West African CFA Franc (XOF).
+
+For fellow fintechs, we built an SDK around this infrastructure: `@lomi/pi-spi-sdk` - a community TypeScript SDK for the PI-SPI Business API ([apps/pi-spi-sdk](./apps/pi-spi-sdk)).
+
+### Additional Payment providers
+
+For regions outside UEMOA or specific use cases, lomi. is built on top of Stripe for enabling international card payments and cryptocurrency payments.
 
 ## Quick Start
+
+### Prerequisites
+
+- **Node.js** >= 18.0.0
+- **pnpm** or **bun** package manager
+- **PostgreSQL** >= 15 (for local development)
+- **Supabase CLI** (optional, for local Supabase instance)
+- **PI-SPI API credentials** (for UEMOA payment processing)
+- **Stripe Connect** for international credit card payment processing
+
+### Database Setup
+
+lomi. uses **separate database configurations** for local development and production:
+
+- **Local development**: Uses local PostgreSQL instance via Supabase CLI
+- **Production**: Uses Supabase cloud instance with enhanced security and scalability
+
+This separation ensures safe testing without affecting production data, independent schema evolution, and environment-specific optimizations.
 
 ### Local development (via merchant dashboard)
 ```bash
 # Clone the repository
-git clone https://github.com/lomiafrica/website.git
+git clone https://github.com/lomiafrica/lomi./
+cd lomi.
 
 # Install dependencies
+pnpm install
+# or
 bun install
 
 # Set up environment variables
-cp .env.example .env
+cp apps/dashboard/.env.example apps/dashboard/.env
 
 # Start the development server
-bun run dev
+pnpm run dev
+# or
+cd apps/website && bun run dev
 ```
 
 ## Documentation
 
 For comprehensive documentation, visit [docs.lomi.africa](https://docs.lomi.africa)
 
-## Use Cases
+## Use cases
 
 - **E-commerce**: Sell physical or digital products online through your website or platforms like Shopify or WooCommerce. Transactions are typically one-time purchases.
 - **SaaS (Software as a Service)**: Offer software on a subscription basis, with automated recurring billing for continuous access.
+- **Usage billing for AI companies**: Create a meter and charge your customers as they use your services
 - **Subscription services**: Manage recurring payments for memberships, content access, and digital products.
 - **Marketplaces**: Handle multi-vendor transactions for platforms like Yango.
 - **Crowdfunding & Donations**: Process payments for fundraising platforms, nonprofits, and charities.
@@ -208,12 +238,11 @@ See the [LICENSE](https://github.com/lomiafrica/lomi.?tab=License-1-ov-file) fil
 
 ## Contributing
 
-We welcome contributions to lomi. ! This document outlines how to submit changes and which conventions to follow.
+We welcome contributions to lomi.! This document outlines how to submit changes and which conventions to follow.
 
 ### Prerequisites
-- You're familiar with GitHub Issues and Pull Requests
-- You've read the [documentation](https://docs.lomi.africa)
-- You've already set up your local instance with `git clone https://github.com/lomiafrica/website` or via `bun install lomi.cli`
+
+You should be familiar with GitHub issues and pull requests, have read our [documentation](https://docs.lomi.africa), and have already set up your local instance with `git clone https://github.com/lomiafrica/lomi./` or via `npx install lomi.cli`.
 
 ### Contribution process
 
@@ -224,22 +253,18 @@ We welcome contributions to lomi. ! This document outlines how to submit changes
    - `feat/` for features
    - `docs/` for documentation changes
 
-3. **Make Changes**: Keep your commits small and focused and ensure that your contribution doesn't modify files marked with `/* @proprietary license *
+3. **Make changes**: Keep your commits small and focused and ensure that your contribution doesn't modify files marked with `/* @proprietary license *
 
 4. **Submit PR**: Open a pull request against the `develop` branch. Include a clear description following the What-Why-How-Testing structure.
 
-5. **Code Review**: A team member will review your PR within a few hours/days.
+5. **Code review**: A team member will review your PR within a few hours/days.
 
 For detailed contribution guidelines, please see our [CONTRIBUTING.md](https://github.com/lomiafrica/lomi./blob/master/CONTRIBUTING.md).
 
 ## Community & Support
 
-- **Discord**: Join our [community Discord](https://discord.gg/yb4FnBmh) for discussions and help
-- **Twitter**: Follow [@lomiafrica](https://twitter.com/lomiafrica) for updates
-- **GitHub**: Submit [issues](https://github.com/lomiafrica/lomi./issues) for bug reports and feature requests
-- **Email**: Contact [hello@lomi.africa](mailto:hello@lomi.africa) for direct support
+Join our [community Discord](https://discord.gg/yb4FnBmh) for discussions and help, follow [@lomiafrica](https://twitter.com/lomiafrica) on Twitter for updates, or connect with us on [Slack](https://join.slack.com/t/lomi-a/shared_invite/zt-3hezykfvo-eW1jX6IkXAqht875Y1wUOw). Submit [issues](https://github.com/lomiafrica/lomi./issues) on GitHub for bug reports and feature requests, or contact us directly at [hello@lomi.africa](mailto:hello@lomi.africa).
 
 ## Security
 
-- For security vulnerabilities, please follow our [Security Policy](https://github.com/lomiafrica/lomi.?tab=security-ov-file)
-- Kindly do not report security vulnerabilities through public GitHub issues
+For security vulnerabilities, please follow our [Security Policy](https://github.com/lomiafrica/lomi.?tab=security-ov-file). Please do not report security vulnerabilities through public GitHub issues.
