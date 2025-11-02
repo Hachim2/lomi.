@@ -155,9 +155,9 @@ The platform provides instant payment confirmation and settlement, allowing you 
 
 For fellow fintechs, we built an SDK around this infrastructure: `@lomi/pi-spi-sdk` - a community TypeScript SDK for the PI-SPI Business API ([apps/pi-spi-sdk](./apps/pi-spi-sdk)).
 
-### Additional Payment providers
+### Additional payment providers
 
-For regions outside UEMOA or specific use cases, lomi. is built on top of Stripe for enabling international card payments and cryptocurrency payments.
+For merchants operating outside UEMOA, lomi. is built on Stripe to enable international payments, including cards and cryptocurrencies.
 
 ## Quick start
 
@@ -200,15 +200,23 @@ For comprehensive documentation, visit [docs.lomi.africa](https://docs.lomi.afri
 ## Use cases
 
 - **E-commerce**: Sell physical or digital products online through your website or platforms like Shopify or WooCommerce. Transactions are typically one-time purchases.
+
 - **SaaS (Software as a Service)**: Offer software on a subscription basis, with automated recurring billing for continuous access.
+
 - **Usage billing for AI companies**: Create a meter and charge your customers as they use your services
+
 - **Subscription services**: Manage recurring payments for memberships, content access, and digital products.
-- **Marketplaces**: Handle multi-vendor transactions for platforms like Yango.
+
 - **Crowdfunding & Donations**: Process payments for fundraising platforms, nonprofits, and charities.
-- **On-Demand Services**: Enable instant payments for ride-sharing, food delivery, and freelance platforms.
-- **B2B Payments**: Support invoicing, large transactions, and business-to-business billing. 
-- **Financial Services & Fintech**: Power embedded finance, payouts, and banking-as-a-service solutions.
-- **Education & Online Learning**: Collect payments for courses, e-learning platforms, and certifications.
+
+- **On-demand services**: Enable instant payments for ride-sharing, food delivery, and freelance platforms.
+
+- **B2B payments**: Support invoicing, large transactions, and business-to-business billing. 
+
+- **Financial services & Fintech**: Power embedded finance, payouts, and banking-as-a-service solutions.
+
+- **Education**: Collect payments for courses, e-learning platforms, and certifications.
+
 - **Events & Ticketing**: Sell tickets for concerts, conferences, and online events.
 
 ## License
